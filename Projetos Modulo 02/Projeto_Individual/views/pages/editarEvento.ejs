@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/style.css" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&family=Plus+Jakarta+Sans:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <title>Simples - Editar Evento</title>
+  </head>
+  <body style="padding: 0; align-items: flex-start; background: #f9fafb">
+    <div class="page-container">
+      <div id="header-placeholder"></div>
+
+      <main class="main-content">
+        <div class="main-layout">
+          <div class="form-sections">
+            <section class="form-section create-form-left">
+              <div class="page-header">
+                <h1 class="form-title">Editar Evento</h1>
+                <p class="form-subtitle">Altere os dados do seu evento</p>
+              </div>
+
+              <% if (typeof error !== 'undefined' && error) { %>
+              <div
+                class="error-message"
+                style="
+                  background-color: #fef2f2;
+                  color: #dc2626;
+                  padding: 12px 16px;
+                  border-radius: 8px;
+                  margin-bottom: 20px;
+                  border: 1px solid #fecaca;
+                  font-size: 14px;
+                  font-weight: 500;
+                "
+              >
+                <%= error %>
+              </div>
+              <% } %> <% if (typeof success !== 'undefined' && success) { %>
+              <div
+                class="success-message"
+                style="
+                  background-color: #f0fdf4;
+                  color: #059669;
+                  padding: 12px 16px;
+                  border-radius: 8px;
+                  margin-bottom: 20px;
+                  border: 1px solid #bbf7d0;
+                  font-size: 14px;
+                  font-weight: 500;
+                "
+              >
+                <%= success %>
+              </div>
+              <% } %>
+
+              <form
+                class="form-container"
+                method="POST"
+                action="/evento/<%= event.id %>/editar"
+              >
+                <div class="input-group">
+                  <label for="name" class="input-label create-label"
+                    >Nome do Evento *</label
+                  >
+                  <div class="input-box">
+                    <input
+                      id="name"
+                      name="name"
+                      type="text"
+                      value="<%= event.name %>"
+                      placeholder="Ex: Conferência de Tecnologia"
+                      class="create-input"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div class="input-group">
+                  <label for="event_date" class="input-label create-label"
+                    >Data *</label
+                  >
+                  <div class="input-box">
+                    <input
+                      id="event_date"
+                      name="event_date"
+                      type="date"
+                      value="<%= event.event_date.toISOString().split('T')[0] %>"
+                      class="create-input"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div class="input-group">
+                  <label for="event_time" class="input-label create-label"
+                    >Hora *</label
+                  >
+                  <div class="input-box">
+                    <input
+                      id="event_time"
+                      name="event_time"
+                      type="time"
+                      value="<%= event.event_time %>"
+                      class="create-input"
+                      required
+                    />
+                  </div>
+                </div>
+
+                <div class="input-group">
+                  <label class="input-label create-label"
+                    >Localização do Evento *</label
+                  >
+
+                  <div
+                    class="address-selected"
+                    style="
+                      background: #f0f9ff;
+                      border: 2px solid #0ea5e9;
+                      border-radius: 8px;
+                      padding: 15px;
+                      margin-bottom: 10px;
+                    "
+                  >
+                    <div
+                      style="
+                        display: flex;
+                        justify-content: space-between;
+                        align-items: center;
+                      "
+                    >
+                      <div>
+                        <p style="margin: 0; font-weight: 500; color: #0369a1">
+                          📍 <%= event.street %>, <%= event.number %>
+                        </p>
+                        <p
+                          style="
+                            margin: 5px 0 0 0;
+                            color: #64748b;
+                            font-size: 14px;
+                          "
+                        >
+                          <%= event.district %> - CEP: <%= event.cep %>
+                        </p>
+                      </div>
+                      <span
+                        style="
+                          background: #f1f5f9;
+                          color: #475569;
+                          padding: 8px 12px;
+                          border-radius: 6px;
+                          font-size: 14px;
+                          border: 1px solid #e2e8f0;
+                        "
+                      >
+                        Endereço Atual
+                      </span>
+                    </div>
+                  </div>
+
+                  <!-- Campos ocultos para manter compatibilidade com o backend -->
+                  <input
+                    type="hidden"
+                    name="street"
+                    value="<%= event.street %>"
+                  />
+                  <input
+                    type="hidden"
+                    name="number"
+                    value="<%= event.number %>"
+                  />
+                  <input
+                    type="hidden"
+                    name="district"
+                    value="<%= event.district %>"
+                  />
+                  <input type="hidden" name="cep" value="<%= event.cep %>" />
+                </div>
+
+                <div class="input-group">
+                  <label for="description" class="input-label create-label"
+                    >Descrição *</label
+                  >
+                  <div class="input-box">
+                    <textarea
+                      id="description"
+                      name="description"
+                      placeholder="Descreva seu evento..."
+                      class="create-textarea"
+                      required
+                    >
+<%= event.description %></textarea
+                    >
+                  </div>
+                </div>
+
+                <div class="form-actions" style="margin-top: 32px">
+                  <button type="submit" class="create-event-btn" id="submitBtn">
+                    Salvar Alterações
+                  </button>
+                  <a
+                    href="/gerenciar"
+                    class="create-event-btn"
+                    style="
+                      background: #6b7280;
+                      text-decoration: none;
+                      text-align: center;
+                      display: inline-flex;
+                      align-items: center;
+                      justify-content: center;
+                      margin-top: 12px;
+                    "
+                  >
+                    Cancelar
+                  </a>
+                </div>
+              </form>
+            </section>
+
+            <section class="form-section create-form-right">
+              <div class="image-upload-container">
+                <div class="image-upload">
+                  <div class="upload-content">
+                    <div class="upload-icon">✏️</div>
+                    <span class="upload-text">Editar Evento</span>
+                    <p class="upload-subtitle">
+                      Altere as informações do seu evento facilmente
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="/scripts.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        setupFormValidation();
+      });
+
+      function setupFormValidation() {
+        const form = document.querySelector('form');
+
+        if (!form) {
+          console.error('Formulário não encontrado!');
+          return;
+        }
+
+        form.addEventListener('submit', function (event) {
+          const submitBtn = document.getElementById('submitBtn');
+          if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Salvando alterações...';
+            submitBtn.classList.add('loading');
+          }
+        });
+
+        // Validação de data
+        const dateInput = document.getElementById('event_date');
+        if (dateInput) {
+          dateInput.addEventListener('change', function () {
+            const selectedDate = new Date(this.value);
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+
+            if (selectedDate < today) {
+              alert('A data do evento não pode ser no passado.');
+              this.value = '';
+            }
+          });
+        }
+      }
+    </script>
+  </body>
+</html>

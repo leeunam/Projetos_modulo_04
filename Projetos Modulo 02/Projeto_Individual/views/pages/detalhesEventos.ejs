@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/style.css" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&family=Plus+Jakarta+Sans:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <title>Simples - Detalhes do Evento</title>
+  </head>
+  <body style="padding: 0; align-items: flex-start; background: white">
+    <div class="page-container">
+      <div id="header-placeholder"></div>
+
+      <div class="main-content">
+        <div class="main-layout">
+          <div class="events-container">
+            <nav class="breadcrumb">
+              <a href="/eventos" class="breadcrumb-item">Eventos</a>
+              <span class="breadcrumb-separator">/</span>
+              <span class="breadcrumb-current"><%= event.name %></span>
+            </nav>
+
+            <section class="event-hero">
+              <div class="event-hero-image">
+                <div class="hero-image">
+                  <img
+                    src="https://images.unsplash.com/photo-1540575467063-178a50c2df87?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"
+                    alt="<%= event.name %>"
+                    style="width: 100%; height: 100%; object-fit: cover"
+                  />
+                </div>
+              </div>
+            </section>
+
+            <section>
+              <% if (typeof error !== 'undefined' && error) { %>
+              <div
+                class="error-message"
+                style="
+                  background-color: #fee;
+                  color: #c33;
+                  padding: 10px;
+                  border-radius: 5px;
+                  margin-bottom: 15px;
+                "
+              >
+                <%= error %>
+              </div>
+              <% } %> <% if (typeof success !== 'undefined' && success) { %>
+              <div
+                class="success-message"
+                style="
+                  background-color: #efe;
+                  color: #363;
+                  padding: 10px;
+                  border-radius: 5px;
+                  margin-bottom: 15px;
+                "
+              >
+                <%= success %>
+              </div>
+              <% } %>
+
+              <h2 class="section-header">Detalhes do Evento</h2>
+
+              <div class="details-grid">
+                <div class="details-row">
+                  <div class="detail-item">
+                    <div class="detail-label">Data e Hora</div>
+                    <div class="detail-value">
+                      <%= new Date(event.event_date).toLocaleDateString('pt-BR',
+                      { weekday: 'long', day: '2-digit', month: 'long', year:
+                      'numeric' }) %>, <%= event.event_time %>
+                    </div>
+                  </div>
+                  <div class="detail-item">
+                    <div class="detail-label">Localização</div>
+                    <div class="detail-value">
+                      <%= event.street %>, <%= event.number %> - <%=
+                      event.district %>, CEP: <%= event.cep %>
+                    </div>
+                  </div>
+                </div>
+                <div class="details-row">
+                  <div class="detail-item">
+                    <div class="detail-label">Organizador</div>
+                    <div class="detail-value">
+                      <%= event.organizer_name || 'Organizador' %>
+                    </div>
+                  </div>
+                  <div class="detail-item">
+                    <div class="detail-label">Tipo de Evento</div>
+                    <div class="detail-value">Evento</div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <section>
+              <h2 class="section-header">Sobre o Evento</h2>
+
+              <div class="event-description">
+                <p><%= event.description %></p>
+              </div>
+
+              <div class="registration-section">
+                <% if (user && event.user_id !== user.id) { %>
+                <form method="POST" action="/evento/<%= event.id %>/inscrever">
+                  <button type="submit" class="register-btn">
+                    Inscrever-se
+                  </button>
+                </form>
+                <% } else if (user && event.user_id === user.id) { %>
+                <p style="color: #666; text-align: center; margin: 20px 0">
+                  Este é o seu evento.
+                  <a
+                    href="/evento/<%= event.id %>/editar"
+                    style="color: #007bff"
+                    >Editar evento</a
+                  >
+                </p>
+                <% } else { %>
+                <a href="/login" class="register-btn">
+                  Faça login para se inscrever
+                </a>
+                <% } %>
+              </div>
+            </section>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="/scripts.js"></script>
+  </body>
+</html>

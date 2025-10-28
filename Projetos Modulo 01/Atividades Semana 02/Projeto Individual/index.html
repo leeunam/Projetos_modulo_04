@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script>
+    <title>Exercício do Pássaro</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<script>
+
+    var config = { //Nessa parte configurei a largura (width) e altura (height) do jogo
+        width: 800,
+        height: 600,
+
+        scene: {
+            preload: preload,
+            create: create,
+            update: update
+        }
+    };
+
+    var game = new Phaser.Game(config);
+
+    var passarinho;
+    var inimigo;
+
+    function preload() { //Nessa parte carreguei tudo que é necessário para o jogo
+        this.load.image('bg', 'assets/bg_space.png');
+        this.load.image('logo', 'assets/logo.png');
+        this.load.spritesheet('bird', 'assets/bird-green.png', { frameWidth: 75, frameHeight: 75 });
+        this.load.spritesheet('inimigo', 'assets/bird-red.png', { frameWidth: 75, frameHeight: 75 });
+    }
+
+    function create() { //Nessa parte acionei tudo que foi carregado no preload e configurei o funcionamento do jogo
+        this.add.image(400, 300, 'bg').setScale(1.2);
+        logo = this.add.image(500, 520, 'logo').setScale(0.1);
+        passarinho = this.add.sprite(100, 400, 'bird').setScale(1.3);
+        inimigo = this.add.sprite(100, 159, 'inimigo').setScale(1.3);
+
+        this.anims.create({ //aqui criei a animação do pássaro verde
+            key: 'fly',
+            frames: this.anims.generateFrameNumbers('bird', { start: 0, end: 7}),
+            frameRate: 20,
+            repeat: -1,
+        });
+
+        this.anims.create({ //aqui criei a animação do pássaro vermelho
+            key: 'voar',
+            frames: this.anims.generateFrameNumbers('inimigo', { start: 0, end: 7}),
+            frameRate: 10,
+            repeat: -1,
+        });
+
+
+        passarinho.anims.play('fly', true);
+        inimigo.anims.play('voar', true);
+
+        this.teclas = this.input.keyboard.addKeys({ //expliquei pro phaser que irei usar teclas
+            up: Phaser.Input.Keyboard.KeyCodes.W,
+            left: Phaser.Input.Keyboard.KeyCodes.A,
+            down: Phaser.Input.Keyboard.KeyCodes.S,
+            right: Phaser.Input.Keyboard.KeyCodes.D
+        })
+        }
+
+    function update() { //Nessa parte atualizei o jogo e 'moldei' a jogabilidade
+        if (inimigo.x === 100){
+            inimigo.setFlip(false, false);
+            inimigo.ida = true;
+        }
+
+        if (inimigo.x < 700 && inimigo.ida === true){
+            console.log ('Se o movimento "x" do passarinho for igual a 100, o passarinho ida será verdade. E caso esse x seja menor que 700 e passarinho.ida for verdade, acrescentar mais 5 de movimento horizontal')
+            inimigo.x += 5;
+        }
+
+        if (inimigo.x === 700){
+            inimigo.setFlip(true, false);
+            inimigo.ida = false;
+        }
+
+        if (inimigo.x > 100 && inimigo.ida === false){
+            console.log ('Se o movimento "x" do passarinho for igual a 700, o passarinho ida será falso. E caso esse x seja maior que 100 e passarinho.ida for falso, tirar mais 5 de movimento horizontal')
+            inimigo.x -= 5;
+        }
+
+        let velocidade = 5; //defini uma velocidade inicial para ele se movimentar
+        // Movimento para cima (W) com limite de até 0 no eixo y para não sair da tela
+        if (this.teclas.up.isDown && passarinho.y > 0) {
+            passarinho.y -= velocidade;
+        }
+        // Movimento para baixo (S) com limite de até 600 no eixo y para não sair da tela
+        if (this.teclas.down.isDown && passarinho.y < 600) {
+            passarinho.y += velocidade;
+        }
+        // Movimento para a esquerda (A) com limite de até 0 no eixo x para não sair da tela
+        if (this.teclas.left.isDown && passarinho.x > 0) {
+            passarinho.x -= velocidade;
+        }
+        // Movimento para a direita (D) com limite de até 800 no eixo x para não sair da tela
+        if (this.teclas.right.isDown && passarinho.x < 800) {
+            passarinho.x += velocidade;
+        }
+
+        let contador = 0;
+        while (contador < 5 && logo.x <600) { //movimentar logo por um looping até certo ponto
+        logo.x += 0.2;
+        contador +=1;
+        }
+
+        }
+    // Obs: Tive que pesquisar na internet e no chat gpt como puxar essa funções de movimentar na tecla.
+</script>
+
+</body>
+</html>
+
+

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercício do Alien</title>
+    <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script>
+    <style> body { display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; } </style>
+</head>
+
+<body>
+    <script>
+        // Cria duas variáveis para armazenar os valores da altura e largura da tela.
+        const larguraJogo = 700;
+        const alturaJogo = 850;
+
+        // Coloca a largura e altura do jogo igual as duas variáveis criadas acima.
+        const config = {
+            type: Phaser.AUTO,
+            width: larguraJogo,
+            height: alturaJogo,
+
+            // Ativa a física do jogo
+            physics: {
+                default: 'arcade',
+                arcade: {
+                    gravity: { y: 300 },
+                    debug: false //torna visível a hitbox e sentido da físico
+                }
+            },
+
+            scene: {
+                preload: preload,
+                create: create,
+                update: update
+            }
+        };
+
+        // Chama o framework do phaser e criamos nosso jogo
+        const game = new Phaser.Game(config);
+
+        // cria as variáveis do jogo.
+        var alien;
+        var teclado; 
+        var turbo;
+        var meteoro;
+        var pedra;
+        var nave;
+        var moeda;
+        var placar;
+        var num;
+        var pontuacao = 0;
+        var contador = []; //cirei essa lista chamada contador para armazenar o numero de moedas coletadas
+
+        function preload() {
+            // carrega as imagens do jogo
+            this.load.image('background', 'assets/bg.png');
+            this.load.image('player', 'assets/et.png');
+            this.load.image('turbo_nave', 'assets/fogo.png');
+            this.load.image('meteoro', 'assets/meteoro.png');
+            this.load.image('moeda', 'assets/moeda.png');
+            this.load.image('pedra', 'assets/rock.png');
+            this.load.image('nave', 'assets/spaceship.png');
+        }
+
+        function create() {
+            // Cria o plano de fundo
+            this.add.image(larguraJogo/2, alturaJogo/2, 'background').setScale(0.35);
+
+            // adiciona o turbo da nave.
+            turbo = this.add.sprite(0, 0, 'turbo_nave');
+            turbo.setVisible(false);
+
+            // Cria o alienigena e ativa o limite para tela do jogo, respectivamente.
+            alien = this.physics.add.sprite(larguraJogo/2, 0, 'player');
+            alien.setCollideWorldBounds(true)
+            /* alien.body.setSize(20, 40, true) - altera a largura, altura e centraliza a hitbox, respectivamente. */
+            
+            // this.input.keyboard = Acessa o sistema de entrada do teclado.
+            // .createCursorKeys() = Cria um objeto que contém as setas do teclado (← ↑ → ↓).
+            // A variável guarda o objeto e permite verificar se uma tecla foi pressionada.
+            teclado = this.input.keyboard.createCursorKeys(); 
+
+            // cria o meteoro na tela e adiciona colisão, respectivamente.
+            meteoro = this.physics.add.staticImage(larguraJogo/2, alturaJogo/2, 'meteoro');
+            this.physics.add.collider(alien, meteoro)
+
+            pedra = this.physics.add.staticImage(larguraJogo/4, alturaJogo/1.2, 'pedra');
+            pedra.body.setSize(pedra.width, pedra.height, false);
+            this.physics.add.collider(alien, pedra);
+
+            nave = this.physics.add.staticImage(larguraJogo/1.2, alturaJogo/2.7, 'nave');
+            nave.body.setSize(nave.width, nave.height, false);
+            this.physics.add.collider(alien, nave);
+
+            //adiciona moeda
+            moeda = this.physics.add.sprite(larguraJogo/4, 0, 'moeda').setScale(0.09);
+            moeda.setCollideWorldBounds(true);
+            moeda.setBounce(0.5);
+            this.physics.add.collider(moeda, meteoro);
+            this.physics.add.collider(moeda, pedra);
+            this.physics.add.collider(moeda, nave);
+
+            //adicionar placar
+            placar = this.add.text(50, 200, 'Moedas:' + pontuacao, {fontSize:'25px', fill:'#FFD700', fontFamily: 'Arial'});
+            texto = this.add.text(50, 230, '"Cada bitcoin vale 5 moedas:"', {fontSize:'10px', fill:'#FFD700', fontFamily: 'Arial'});
+            // criei esse texto abaixo para mostrar ao usuário o tanto de moedas foram coletadas.
+            contador_texto = this.add.text(50, 250, 'Você coletou: ' + contador.length + ' BTCs', {fontSize:'15px', fill:'#FFD700', fontFamily: 'Arial'});
+
+            //quando o alien encostar na moeda, acontecerá
+            this.physics.add.overlap(alien, moeda, function(){
+                moeda.setVisible(false); // moeda invisivel
+                var posicaoMoeda_X = Phaser.Math.RND.between(50,650); //sorteia números
+                moeda.setPosition(posicaoMoeda_X, 100); // ajusta a posição X da moeda conforma o sorteado
+                pontuacao += 5; // soma pontuação do usuário. Lembrando que cada bitcoin vale 5 no score)
+                placar.setText('Moedas: ' + pontuacao); // atualiza texto do placar
+                contador += 1; // adiciona 1 item na lista do contador
+                contador_texto.setText('Você coletou: ' + contador.length + ' BTCs'); // atualiza texto do contador de moedas coletadas.
+                moeda.setVisible(true); //ativa a visão da nova moeda
+            })
+            
+            console.log (contador.length);
+        }
+
+        function update() {
+            // Move para esquerda.
+            if (teclado.left.isDown){
+                alien.setVelocityX(-150);}
+
+            // Move para direita.
+            else if (teclado.right.isDown){
+                alien.setVelocityX(150);}
+
+            // Sem movimento horizontal
+            else{
+                alien.setVelocityX(0);}
+
+            // Move para cima.
+            if (teclado.up.isDown){
+                alien.setVelocityY(-150);
+                ativarTurbo();}
+
+            // Acelera o movimento de queda.
+            else if (teclado.down.isDown){
+                alien.setVelocityY(alien.body.velocity.y + 5);
+                semTurbo();}
+
+            // Nenhum movimento vertical além da gravidade.
+            else {
+                semTurbo();}
+
+            turbo.setPosition(alien.x, alien.y + alien.height/2);
+        }
+
+        function ativarTurbo(){
+            turbo.setVisible(true);}
+
+        function semTurbo(){
+            turbo.setVisible(false);}
+
+    </script>
+</body>
+</html>
