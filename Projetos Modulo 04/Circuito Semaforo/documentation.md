@@ -20,3 +20,5 @@ Para que a montagem seja feita de maneira correta, é recomendável seguir a seg
 ---
 
 **OBS:** Caso deseje ver a implementação física o arquivo é AtvAula03/arduino-de-perto-mp4 ou [clique aqui](arduino-de-perto.mp4)
+caso não funcione acesse o link:
+[link](https://drive.google.com/file/d/1rL-YEOvB_pl3o1C2TgWWhjNlmHFqm7jz/view?usp=sharing)
